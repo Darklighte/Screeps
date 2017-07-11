@@ -1,3 +1,4 @@
+var roomUtil = require('util.room');
 var creepSpawning = require('role.spawn');
 var worker = require('role.worker');
 var builder = require('role.builder');
@@ -9,41 +10,58 @@ var spawn1 = Game.spawns['Spawn01'];
 var sources = spawn1.room.find(FIND_SOURCES);
 
 var HARVESTER_COUNT = 2;
+var STORAGE_COUNT = 2;
 var WORKER_COUNT = 6;
-var BUILDER_COUNT = 4;
+var BUILDER_COUNT = 5;
 
 var manualWork = false;
 
-module.exports.loop = function () {
-    creepSpawning.maintainWorkers(WORKER_COUNT);
-    creepSpawning.maintainBuilders(BUILDER_COUNT);
-    creepSpawning.maintainHarvesters(HARVESTER_COUNT);
-
-
-
+module.exports.loop = function () 
+{
+    // refresh cached filtered arrays for efficiency and so they don't go stale
+    roomUtil.RefreshFilteredArrays();
+    
+    if(spawn1.spawning == null)
+    {
+        creepSpawning.maintainWorkers(WORKER_COUNT);
+        creepSpawning.maintainBuilders(BUILDER_COUNT);
+        creepSpawning.maintainStorage(STORAGE_COUNT);
+        creepSpawning.maintainHarvesters(HARVESTER_COUNT);
+    }
+    
+    
     var enemies = spawn1.room.find(FIND_HOSTILE_CREEPS);
-    for (var i = 0; i < enemies.length; i++) {
+    for(var i = 0; i < enemies.length; i++)
+    {
         var enemy = enemies[i];
         dumbTower.FindAndShootEnemy(enemy);
     }
-
-    for (var name in Game.creeps) {
+    
+    for(var name in Game.creeps)
+    {
         var creep = Game.creeps[name];
-
-        if (creep.memory.role == 'container') {
+        
+        if(creep.memory.role == 'container')
+        {
             //console.log('container harvesting');
             containerHarvest.HarvestToContainer(creep);
         }
-        if (creep.memory.role == 'worker') {
+        if(creep.memory.role == 'worker')
+        {
             worker.Work(creep);
         }
-        if (creep.memory.role == 'builder') {
+        if(creep.memory.role == 'builder')
+        {
             builder.Work(creep);
         }
-        if (creep.memory.role == 'storage') {
-            worker.EnergyToStorage(creep);
+        if(creep.memory.role == 'storage')
+        {
+            worker.StoreEnergy(creep);
         }
     }
+    
+    var storageLink = roomUtil.FindStorageLink();
+    roomUtil.FillLinks(storageLink);
 }
 
 
