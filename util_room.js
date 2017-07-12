@@ -126,19 +126,36 @@ var roomUtil =
             
             repairTargets[currentRoomName] = currentRoom.find(FIND_STRUCTURES, 
                 { 
-                    filter: object => (object.hits < 500000 && object.hits < object.hitsMax) 
+                    filter: object => (object.hits < 600000 && object.hits < object.hitsMax) 
                 });
         }
     },
     
     
-    
+    FindUpgradeContainer:function(room)
+    {
+      var containers = room.lookForAtArea(LOOK_STRUCTURES, 
+                                    room.controller.pos.y-2,
+                                    room.controller.pos.x-2,
+                                    room.controller.pos.y+2,
+                                    room.controller.pos.x+2,
+                                    true);
+      
+        for(var i = 0; i < containers.length; i++)
+        {
+            if(containers[i].structure.structureType == STRUCTURE_CONTAINER)
+            {
+                return containers[i].structure;
+            }
+            //console.log(containers[i].structure.structureType == STRUCTURE_CONTAINER);
+        }
+    },
     
     
     // find open container next to source
     FindSourceContainer:function(source)
     {
-        var containers =  source.room.lookForAtArea(LOOK_STRUCTURES,
+        var containers = source.room.lookForAtArea(LOOK_STRUCTURES,
                                                 source.pos.y-1,
                                                 source.pos.x-1,
                                                 source.pos.y+1,

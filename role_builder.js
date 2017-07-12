@@ -8,12 +8,11 @@ var workType =
     STORE : 3
 };
 
-var spawn = Game.spawns['Spawn01'];
-var source = Game.rooms['E84S33'].find(FIND_SOURCES)[1];
 var containers;
 
 function HarvestEnergy(creep)
 {
+    var source = Game.rooms['E84S33'].find(FIND_SOURCES)[1];
     containers = roomUtil.GetAvailableEnergyTargets(creep.room);
     var container = creep.pos.findClosestByRange(containers);
     //containers = _.sortBy(roomUtil.GetAvailableEnergyTargets(creep.room), [function(o) { return o.store.energy; }] );
@@ -44,10 +43,6 @@ function BuildSite(creep)
     {
         creep.moveTo(sitePos, {visualizePathStyle: {stroke: '#ffaa00'}});
     }
-    else if(creep.build(sitePos) == OK)
-    {
-        //BUILD THAT SHIZ
-    }
     else if(creep.build(sitePos) == ERR_NOT_ENOUGH_RESOURCES)
     {
         creep.memory.currentWork = workType.HARVEST;
@@ -67,9 +62,10 @@ function Repair(creep)
         //console.log(targets.length);
         if(targets.length > 0) 
         {
-            if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) 
+            var repairTarget = creep.pos.findClosestByRange(targets);
+            if(creep.repair(repairTarget) == ERR_NOT_IN_RANGE) 
             {
-                creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffaa00'}});
+                creep.moveTo(repairTarget, {visualizePathStyle: {stroke: '#ffaa00'}});
             }
         }
         else

@@ -77,7 +77,7 @@ function StoreEnergy(creep)
         //console.log('targets to refill ' + targets.length);
         if(targets.length > 0) 
         {
-            var currentTarget = targets[targets.length-1];
+            var currentTarget = creep.pos.findClosestByRange(targets);
             if(creep.transfer(currentTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) 
             {
                 creep.moveTo(currentTarget, {visualizePathStyle: {stroke: '#ffffff'}});
